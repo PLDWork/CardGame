@@ -1,0 +1,110 @@
+.cards {
+  position: relative;
+  background-color: rgb(188, 217, 162);
+  height: 220px;
+  width: 150px;
+  min-width: 150px;
+  border: 2px solid black;
+  border-radius: 5px;
+  margin: 3px;
+  padding: 2px;
+  box-shadow: 0px 0px 3px 2px rgb(0, 0, 0, 0.7);
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.buyable {
+  box-shadow:
+    0px 0px 3px 2px rgb(0, 0, 0),
+    inset 0 0 4px 4px rgba(0, 150, 255, 0.8);
+  border-radius: 5px;
+  border: 2px solid rgba(0, 150, 255, 1);
+}
+
+.killable {
+  box-shadow:
+    0px 0px 3px 2px rgb(0, 0, 0),
+    inset 0 0 4px 4px rgba(255, 0, 0, 0.8);
+  border-radius: 5px;
+  border: 2px solid rgba(255, 0, 0, 0.8);
+}
+
+.cards:hover {
+  transform: scale(1.05);
+}
+
+.icon-row {
+  text-align: center;
+  display: flex;
+  justify-content: space-evenly;
+  height: 35px;
+  margin-bottom: 5px;
+}
+
+.card-name {
+  height: 25px;
+  text-align: center;
+  align-content: center;
+  background-color: rgba(16, 158, 206, 0.445);
+  border: 1px solid black;
+  border-radius: 8px;
+  margin: 0px;
+}
+
+.card-text {
+  text-align: center;
+  height: 80px;
+  margin: 3xp 0px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.row > p {
+  font-size: 25px;
+}
+
+.images {
+  height: 25px;
+  margin-left: 2px;
+}
+
+.card-id {
+  position: absolute;
+  bottom: 0;
+  margin: 2px;
+}
+
+.cost {
+  font-size: 25px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(244, 238, 105);
+  border: 2px solid rgb(156, 121, 60);
+  color: red;
+  /* text-shadow: 0px 0px 1px red; */
+  border-radius: 50%;
+  height: 32px;
+  width: 32px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 2px;
+}
+
+.cost-text {
+  margin: 0px;
+}
+
+.space {
+  height: 70px;
+}
+
+.bonus-HP {
+  color: green;
+}

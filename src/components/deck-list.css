@@ -1,0 +1,15 @@
+.deck-list {
+  display: flex;
+}
+
+.deck-list p {
+  margin: 2px;
+}
+
+.name {
+  width: 250px;
+}
+
+.ids {
+  width: 100px;
+}
