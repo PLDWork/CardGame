@@ -175,7 +175,7 @@ const shopDeck1 = [
       attack: 2,
       coin: 0,
     },
-    text: "",
+    text: "If armor in play area: +2 attack",
     abilities: [{ function: "discardCard", arg: ["addAttack", "2"] }],
     amount: 1,
   },
