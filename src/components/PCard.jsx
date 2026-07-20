@@ -19,11 +19,11 @@ function PCard(props) {
       <div className="icon-row">
         <div className="row" style={{ visibility: attackDisplay }}>
           <p>{props.icons.attack}</p>
-          <img className="images" src="/icons/sword.svg" alt="attack" />
+          <img className="images" src="icons/sword.svg" alt="attack" />
         </div>
         <div className="row" style={{ visibility: coinDisplay }}>
           <p>{props.icons.coin}</p>
-          <img className="images" src="/icons/coin.svg" alt="coin" />
+          <img className="images" src="icons/coin.svg" alt="coin" />
         </div>
       </div>
       <div>

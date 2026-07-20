@@ -57,11 +57,11 @@ function PlayerArea(props) {
             <div className="icons">
               <div className="icon-pair">
                 <p>{props.coin}</p>
-                <img className="player-images" src="/icons/coin.svg" alt="coin" />
+                <img className="player-images" src="icons/coin.svg" alt="coin" />
               </div>
               <div className="icon-pair">
                 <p>{props.attack}</p>
-                <img className="player-images" src="/icons/sword.svg" alt="attack" />
+                <img className="player-images" src="icons/sword.svg" alt="attack" />
               </div>
             </div>
           </div>

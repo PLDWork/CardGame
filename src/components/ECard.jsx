@@ -19,7 +19,7 @@ function ECard(props) {
       <div className="icon-row">
         <div className="row">
           <p className={`${props.icons.bonusHP > 0 && "bonus-HP"}`}>{props.icons.health + props.icons.bonusHP}</p>
-          <img className="images" src="/icons/heart.svg" alt="health" />
+          <img className="images" src="icons/heart.svg" alt="health" />
         </div>
       </div>
       <p className="card-id">{props.id}</p>
