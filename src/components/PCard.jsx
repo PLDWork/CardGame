@@ -15,7 +15,7 @@ function PCard(props) {
   }
 
   return (
-    <div className={`cards ${props.buyable && "buyable"}`} onClick={handleClick}>
+    <div className={`cards ${props.buyable && "buyable"} ${props.disableClicks && "no-hover"}`} aria-disabled={props.disableClicks} onClick={props.disableClicks ? undefined : handleClick}>
       <div className="icon-row">
         <div className="row" style={{ visibility: attackDisplay }}>
           <p>{props.icons.attack}</p>

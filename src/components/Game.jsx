@@ -9,7 +9,12 @@ import GameLog from "./GameLog";
 function App() {
   const [hideStartButton, setHideStartButton] = useState(false);
   const [messageInfoState, setMessageInfoState] = useState({ show: false, message: "Game in progess" });
-  const [stopAllOnClick, setStopOnClick] = useState(false);
+  const [gameRunningState, setGameRunning] = useState(false);
+  const [disableGameButtonsState, setDisableGameButtons] = useState(true);
+  const [disableStartButtonsState, setDisableStartButtons] = useState(false);
+  const [showRulesState, setShowRules] = useState(false);
+  const [showDecksState, setShowDecks] = useState(false);
+  const [showMenuState, setShowMenu] = useState(false);
 
   const [playerDeckState, setPlayerDeck] = useState([]);
   const [playerHandState, setPlayerHand] = useState([]);
@@ -111,8 +116,44 @@ function App() {
     return shuffled;
   }
 
+  function showInfo() {
+    setShowRules(!showRulesState);
+  }
+
+  function toggleMenu() {
+    if (showMenuState) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  }
+
+  function openMenu() {
+    setShowMenu(true);
+    setDisableGameButtons(true);
+    setDisableStartButtons(true);
+  }
+
+  function closeMenu() {
+    setShowMenu(false);
+    setDisableGameButtons(!gameRunningState);
+    setDisableStartButtons(false);
+  }
+
+  function showDecks(e) {
+    setShowDecks(e.target.checked);
+  }
+
+  function stopGame(new_message) {
+    setMessageInfoState({ show: true, message: new_message });
+    setDisableGameButtons(true);
+    setGameRunning(false);
+  }
+
   function startGame() {
     setHideStartButton(true);
+    setDisableGameButtons(false);
+    setGameRunning(true);
     gameLog("Game starting...");
     const newStartGameLog = "Turn " + turnCountRef.current;
     gameLog(newStartGameLog);
@@ -209,6 +250,7 @@ function App() {
     reRender();
   }
 
+  //#region Card Moving
   function addCardToPlayerDiscard(cardId) {
     let newCard;
     if (shopRow.find((card) => card.id === cardId) !== undefined) {
@@ -286,10 +328,6 @@ function App() {
     reRenderPlayer = true;
   }
 
-  function addAttack(amount) {
-    playerAttack += parseInt(amount);
-  }
-
   function discardPlayerCard(func, arg) {
     if (playerHand.length > 0) {
       const discardedCard = playerHand[Math.floor(Math.random() * playerHand.length)];
@@ -305,14 +343,6 @@ function App() {
       reRenderPlayer = true;
     } else {
       console.log("Error discarding card");
-    }
-  }
-
-  function checkForArmor(amount) {
-    if (playArea.find((card) => card.attribute === "armor") !== undefined) {
-      addAttack(amount);
-    } else {
-      console.log("No armor in play area");
     }
   }
 
@@ -342,33 +372,44 @@ function App() {
       playPlayerCard(playerHand[0].id);
     }
   }
+  //#endregion
 
-  function attackEnemy(cardId) {
-    const slotIndex = enemiesField.findIndex((card) => card.id === cardId);
-    const enemy = slotIndex !== -1 ? enemiesField[slotIndex] : undefined;
+  //#region Abilities
+  const abilityList = {
+    drawCard: (count) => {
+      drawPlayerCard(count);
+      reRender();
+    },
+    discardCard: (func, arg) => {
+      discardPlayerCard(func, arg);
+      reRender();
+    },
+    addAttack: (arg) => {
+      addAttack(arg);
+      reRender();
+    },
+    checkForArmor: (func, arg) => {
+      checkForArmor(func, arg);
+      reRender();
+    },
+  };
 
-    if (enemy !== undefined && enemy.icons.health + enemy.icons.bonusHP <= playerAttack) {
-      enemiesField[slotIndex] = {};
-      playerAttack -= enemy.icons.health + enemy.icons.bonusHP;
-      resetBonusHP();
-      applyEnemyAbilities();
-      const newDefeatLog = "Defeated: " + enemy.name + " id: " + enemy.id;
-      gameLog(newDefeatLog);
-      reRenderEnemies = true;
-      reRenderPlayer = true;
+  const enemyAbilityList = {
+    flagBuff: (index) => {
+      flagBuff(index);
+      reRender();
+    },
+  };
+  function addAttack(amount) {
+    playerAttack += parseInt(amount);
+  }
+
+  function checkForArmor(func, arg) {
+    if (playArea.find((card) => card.attributes.find((attr) => attr === "armor")) !== undefined) {
+      abilityList[func]?.(arg);
     } else {
-      console.log("Not enough attack");
+      console.log("No armor in play area");
     }
-
-    if (enemiesDeck.length === 0 && isArrayOfEmptyObject(enemiesField)) {
-      setMessageInfoState({ show: true, message: "You Win!" });
-      setStopOnClick(true);
-      console.log("You win!");
-      const newWinLog = "You Win!";
-      gameLog(newWinLog);
-    }
-
-    reRender();
   }
 
   function flagBuff(index) {
@@ -394,7 +435,35 @@ function App() {
       }
     }
   }
+  //#endregion
 
+  function attackEnemy(cardId) {
+    const slotIndex = enemiesField.findIndex((card) => card.id === cardId);
+    const enemy = slotIndex !== -1 ? enemiesField[slotIndex] : undefined;
+
+    if (enemy !== undefined && enemy.icons.health + enemy.icons.bonusHP <= playerAttack) {
+      enemiesField[slotIndex] = {};
+      playerAttack -= enemy.icons.health + enemy.icons.bonusHP;
+      resetBonusHP();
+      applyEnemyAbilities();
+      const newDefeatLog = "Defeated: " + enemy.name + " id: " + enemy.id;
+      gameLog(newDefeatLog);
+      reRenderEnemies = true;
+      reRenderPlayer = true;
+    } else {
+      console.log("Not enough attack");
+    }
+
+    if (enemiesDeck.length === 0 && isArrayOfEmptyObject(enemiesField)) {
+      stopGame("You Win!");
+      console.log("You win!");
+      const newWinLog = "You Win!";
+      gameLog(newWinLog);
+    }
+
+    reRender();
+  }
+  //#region End of Turn
   function resetBonusHP() {
     enemiesField.forEach((enemy) => {
       if (!isEmpty(enemy)) {
@@ -405,8 +474,7 @@ function App() {
 
   function advanceEnemies() {
     if (!isEmpty(enemiesField[4])) {
-      setMessageInfoState({ show: true, message: "You Lose..." });
-      setStopOnClick(true);
+      stopGame("You Lose...");
       console.log("You lose");
       return;
     }
@@ -458,6 +526,7 @@ function App() {
     refillShop();
     reRender();
   }
+  //#endregion
 
   function reRender() {
     if (reRenderPlayer) {
@@ -483,66 +552,80 @@ function App() {
     }
   }
 
-  const abilityList = {
-    drawCard: (count) => {
-      drawPlayerCard(count);
-      reRender();
-    },
-    discardCard: (func, arg) => {
-      discardPlayerCard(func, arg);
-      reRender();
-    },
-    addAttack: (arg) => {
-      addAttack(arg);
-      reRender();
-    },
-    checkForArmor: (arg) => {
-      checkForArmor(arg);
-      reRender();
-    },
-  };
-
-  const enemyAbilityList = {
-    flagBuff: (index) => {
-      flagBuff(index);
-      reRender();
-    },
-  };
-
   return (
     <div>
-      <h1 className="game-name">Card Game</h1>
-      <div className="flex-center">
-        {!hideStartButton && (
-          <button className="start-button" disabled={stopAllOnClick} onClick={startGame}>
-            Start Game
+      <div className="title-bar">
+        <div className="game-name-area">
+          <h1 className="game-name">Card Game</h1>
+        </div>
+        <div className="start-button-area flex-center">
+          {!hideStartButton && (
+            <button className="start-button" disabled={disableStartButtonsState} onClick={startGame}>
+              Start Game
+            </button>
+          )}
+        </div>
+        <div className="title-button-row">
+          <button className="info-button" onClick={showInfo}>
+            i
           </button>
-        )}
+          <button className="info-button" onClick={toggleMenu}>
+            S
+          </button>
+        </div>
       </div>
-      <EnemiesArea deck={enemiesDeckState} field={enemiesFieldState} discard={enemiesDiscardState} playerAttack={playerAttackState} attack={attackEnemy} disableClicks={stopAllOnClick} />
-      <ShopArea
-        constant={shopConstantState}
-        deck={shopDeckState}
-        row={shopRowState}
-        discard={shopDiscardState}
-        playerCoin={playerCoinState}
-        addCard={addCardToPlayerDiscard}
-        disableClicks={stopAllOnClick}
-      />
-      <PlayerArea
-        deck={playerDeckState}
-        hand={playerHandState}
-        playArea={playAreaState}
-        discardLength={playerDiscardState.length}
-        coin={playerCoinState}
-        attack={playerAttackState}
-        messageInfo={messageInfoState}
-        drawCard={manualDraw}
-        endTurn={handleEndTurn}
-        playCard={playPlayerCard}
-        playAll={playAllPlayerCard}
-        disableClicks={stopAllOnClick}
-      />
+      <div className="game-area">
+        {showMenuState && (
+          <div className="menu">
+            <div className="align-r">
+              <button className="button-rec" onClick={closeMenu}>
+                X
+              </button>
+            </div>
+            <div>
+              <label>Show decks</label>
+              <input className="menu-button" type="checkbox" name="showDecks" checked={showDecksState} onChange={showDecks} />
+            </div>
+          </div>
+        )}
+        <EnemiesArea
+          deck={enemiesDeckState}
+          field={enemiesFieldState}
+          discard={enemiesDiscardState}
+          playerAttack={playerAttackState}
+          disableClicks={disableGameButtonsState}
+          showRules={showRulesState}
+          showDeck={showDecksState}
+          attack={attackEnemy}
+        />
+        <ShopArea
+          constant={shopConstantState}
+          deck={shopDeckState}
+          row={shopRowState}
+          discard={shopDiscardState}
+          playerCoin={playerCoinState}
+          disableClicks={disableGameButtonsState}
+          showRules={showRulesState}
+          showDeck={showDecksState}
+          addCard={addCardToPlayerDiscard}
+        />
+        <PlayerArea
+          deck={playerDeckState}
+          hand={playerHandState}
+          playArea={playAreaState}
+          discardLength={playerDiscardState.length}
+          coin={playerCoinState}
+          attack={playerAttackState}
+          messageInfo={messageInfoState}
+          disableClicks={disableGameButtonsState}
+          showRules={showRulesState}
+          showDeck={showDecksState}
+          drawCard={manualDraw}
+          endTurn={handleEndTurn}
+          playCard={playPlayerCard}
+          playAll={playAllPlayerCard}
+        />
+      </div>
       <GameLog content={logContentState} />
     </div>
   );

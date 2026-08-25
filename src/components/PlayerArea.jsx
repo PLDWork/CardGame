@@ -3,29 +3,10 @@ import PCard from "./PCard";
 import DeckList from "./DeckList";
 
 function PlayerArea(props) {
-  const [isDeckHidden, setDeckHidden] = useState(true);
-  const [buttonText, setButtonText] = useState("Show");
-  const [playAnimationVisible, setPlayAnimationVisible] = useState(false);
-  const [animationActive, setAnimationActive] = useState(false);
   const cardRefs = useRef([]);
-
-  function toggleDeckVisibility() {
-    setButtonText(isDeckHidden ? "Hide" : "Show");
-    setDeckHidden(!isDeckHidden);
-  }
 
   function handleDraw() {
     props.drawCard(1);
-  }
-
-  function showAnimation() {
-    setPlayAnimationVisible(true);
-    setAnimationActive(true);
-  }
-
-  function onAnimationEnd() {
-    setPlayAnimationVisible(false);
-    setAnimationActive(false);
   }
 
   function playCard(id) {
@@ -36,7 +17,6 @@ function PlayerArea(props) {
       console.log(rect);
     }
 
-    showAnimation();
     props.playCard(id);
   }
 
@@ -52,6 +32,15 @@ function PlayerArea(props) {
     <>
       <div>
         <div className="player-area">
+          {props.showRules && (
+            <div className="rules">
+              <h2>This is the player area.</h2>
+              <p>
+                Each turn, you can play all your cards in the order that you choose. Using the Play All button will play all your cards from left to right. When you end the turn, all cards played and
+                remaining in your hand will be discarded and your will draw 5 new cards. If you have to draw a card and your deck is empty, your discard pile is shuffle to make a new deck.
+              </p>
+            </div>
+          )}
           <div className="player-top">
             <p className="area-name">Player</p>
             <div className="icons">
@@ -72,10 +61,7 @@ function PlayerArea(props) {
               {/* <button className="player-button" disabled={props.disableClicks} onClick={handleDraw}>
                 Draw
               </button> */}
-              <button className="player-button" onClick={toggleDeckVisibility}>
-                {buttonText}
-              </button>
-              <button className="player-button" onClick={playAllCards}>
+              <button className="player-button" disabled={props.disableClicks} onClick={playAllCards}>
                 Play All
               </button>
             </div>
@@ -87,14 +73,26 @@ function PlayerArea(props) {
               </div>
               <div className="card-area">
                 {props.hand.map((card, index) => {
-                  return <PCard key={card.id} ref={(el) => (cardRefs.current[card.id] = el)} id={card.id} name={card.name} text={card.text} icons={card.icons} location="player" playCard={playCard} />;
+                  return (
+                    <PCard
+                      key={card.id}
+                      ref={(el) => (cardRefs.current[card.id] = el)}
+                      id={card.id}
+                      name={card.name}
+                      text={card.text}
+                      icons={card.icons}
+                      location="player"
+                      playCard={playCard}
+                      disableClicks={props.disableClicks}
+                    />
+                  );
                 })}
               </div>
             </div>
             <div className="player-info">
               <p>Discard</p>
               <p>{props.discardLength} cards</p>
-              <button className="player-button" onClick={handleEndTurn}>
+              <button className="player-button" disabled={props.disableClicks} onClick={handleEndTurn}>
                 End Turn
               </button>
             </div>
@@ -104,16 +102,15 @@ function PlayerArea(props) {
               <p className="message-text">{props.messageInfo.message}</p>
             </div>
           )}
-          <div
-            className={"card-animation" + (playAnimationVisible ? " play-card-animation" : "") + (animationActive ? " show-card-animation" : "hide-card-animation")}
-            onAnimationEnd={onAnimationEnd}
-          ></div>
         </div>
       </div>
-      {!isDeckHidden && (
-        <div className="deck-list">
-          <DeckList deck={props.deck} />
-        </div>
+      {props.showDeck && (
+        <details>
+          <summary className="show-deck-summary">Show player deck</summary>
+          <div className="deck-list">
+            <DeckList deck={props.deck} />
+          </div>
+        </details>
       )}
     </>
   );

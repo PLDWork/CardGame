@@ -3,9 +3,6 @@ import PCard from "./PCard";
 import DeckList from "./DeckList";
 
 function ShopArea(props) {
-  const [isDeckHidden, setDeckHidden] = useState(true);
-  const [deckDisplay, setDeckDisplay] = useState("none");
-  const [buttonText, setButtonText] = useState("Show");
   const [constant1Buyable, setConstant1Buyable] = useState(false);
   const [constant2Buyable, setConstant2Buyable] = useState(false);
   const [slot1Buyable, setSlot1Buyable] = useState(false);
@@ -24,12 +21,6 @@ function ShopArea(props) {
     setSlot5Buyable(!isEmpty(props.row[4]) && props.row[4].icons.cost <= props.playerCoin ? true : false);
   }, [props.playerCoin]);
 
-  function toggleDeckVisibility() {
-    setButtonText(isDeckHidden ? "Hide" : "Show");
-    setDeckDisplay(isDeckHidden ? "Inline" : "None");
-    setDeckHidden(!isDeckHidden);
-  }
-
   function isEmpty(obj) {
     for (const prop in obj) {
       if (Object.hasOwn(obj, prop)) {
@@ -47,17 +38,20 @@ function ShopArea(props) {
   return (
     <>
       <div className="shop-area">
+        {props.showRules && (
+          <div className="rules">
+            <h2>This is the shop area.</h2>
+            <p>Buy new cards with coin to make your deck stronger. Cards you buy to into your discard.</p>
+          </div>
+        )}
         <div style={{ display: "flex" }}>
           <p className="area-name">Shop</p>
-          <button className="player-button" onClick={toggleDeckVisibility}>
-            {buttonText}
-          </button>
         </div>
         <div className="row">
           <div className="shop-constant">
             {isEmpty(props.constant[0][0]) ? (
               <div id="slot-1" className="enemy-slot">
-                1
+                S
               </div>
             ) : (
               <PCard
@@ -69,11 +63,12 @@ function ShopArea(props) {
                 location="shop"
                 buyable={constant1Buyable}
                 addCard={addNewCard}
+                disableClicks={props.disableClicks}
               />
             )}
             {isEmpty(props.constant[1][0]) ? (
               <div id="slot-2" className="enemy-slot">
-                1
+                S
               </div>
             ) : (
               <PCard
@@ -85,6 +80,7 @@ function ShopArea(props) {
                 location="shop"
                 buyable={constant2Buyable}
                 addCard={addNewCard}
+                disableClicks={props.disableClicks}
               />
             )}
           </div>
@@ -103,6 +99,7 @@ function ShopArea(props) {
                 location="shop"
                 buyable={slot1Buyable}
                 addCard={addNewCard}
+                disableClicks={props.disableClicks}
               />
             )}
             {isEmpty(props.row[1]) ? (
@@ -119,6 +116,7 @@ function ShopArea(props) {
                 location="shop"
                 buyable={slot2Buyable}
                 addCard={addNewCard}
+                disableClicks={props.disableClicks}
               />
             )}
             {isEmpty(props.row[2]) ? (
@@ -135,6 +133,7 @@ function ShopArea(props) {
                 location="shop"
                 buyable={slot3Buyable}
                 addCard={addNewCard}
+                disableClicks={props.disableClicks}
               />
             )}
             {isEmpty(props.row[3]) ? (
@@ -151,6 +150,7 @@ function ShopArea(props) {
                 location="shop"
                 buyable={slot4Buyable}
                 addCard={addNewCard}
+                disableClicks={props.disableClicks}
               />
             )}
             {isEmpty(props.row[4]) ? (
@@ -167,14 +167,20 @@ function ShopArea(props) {
                 location="shop"
                 buyable={slot5Buyable}
                 addCard={addNewCard}
+                disableClicks={props.disableClicks}
               />
             )}
           </div>
         </div>
       </div>
-      <div style={{ display: deckDisplay }} className="deck-list">
-        <DeckList deck={props.deck} />
-      </div>
+      {props.showDeck && (
+        <details>
+          <summary className="show-deck-summary">Show show deck</summary>
+          <div className="deck-list">
+            <DeckList deck={props.deck} />
+          </div>
+        </details>
+      )}
     </>
   );
 }

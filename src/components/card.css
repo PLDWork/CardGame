@@ -33,6 +33,10 @@
   transform: scale(1.05);
 }
 
+.no-hover {
+  pointer-events: none;
+}
+
 .icon-row {
   text-align: center;
   display: flex;

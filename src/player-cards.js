@@ -247,13 +247,13 @@ const shopDeck1 = [
   {
     cardId: 19,
     name: "Plate Armor",
-    attributes: [],
+    attributes: ["armor"],
     icons: {
       cost: 6,
       attack: 0,
       coin: 2,
     },
-    text: "",
+    text: "Draw 3 Card",
     abilities: [{ function: "drawCard", arg: "3" }],
     amount: 1,
   },

@@ -4,7 +4,7 @@ import "./deck-list.css";
 function DeckList(props) {
   return (
     <div>
-      {props.deck.map((card) => {
+      {props.deck.toReversed().map((card) => {
         return (
           <div key={card.id} className="deck-list">
             <p className="name">Name: {card.name}</p>

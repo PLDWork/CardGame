@@ -9,7 +9,7 @@ function ECard(props) {
   }
 
   return (
-    <div className={`cards ${props.killable && "killable"}`} onClick={handleClick}>
+    <div className={`cards ${props.killable && "killable"} ${props.disableClicks && "no-hover"}`} aria-disabled={props.disableClicks} onClick={props.disableClicks ? undefined : handleClick}>
       <div>
         <p className="card-name">{props.name}</p>
       </div>

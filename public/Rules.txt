@@ -1,15 +1,14 @@
-This is the enemy deck.
-Each end of turn, every enemy moves one space to the right.
+This is the enemy area.
+Win the game by defeating every enemy!
+When the turn ends, every enemy moves one space to the right.
 You lose if there is an enemy on space 5 when you end your turn.
-You win if you defeat every enemy.
 
-This is your deck.
-Each turn, you can play all your cards in the order that you choose.
-Using the Play All button will play all your cards from left to right.
-When you end your turn, all cards played and remaining in your hand will be discarded and your will draw 5 new cards.
-If you have to draw a card and your deck is empty, your discard pile is shuffle to make a new deck.
-
-This is the shop row.
+This is the shop area.
 Buy new cards to make your deck stronger.
 Cards you buy to into your discard.
 
+This is the player area.
+Each turn, you can play all your cards in the order that you choose.
+Using the Play All button will play all your cards from left to right.
+When you end the turn, all cards played and remaining in your hand will be discarded and your will draw 5 new cards.
+If you have to draw a card and your deck is empty, your discard pile is shuffle to make a new deck.
